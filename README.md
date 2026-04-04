@@ -52,21 +52,4 @@ PrintPath <s> <t>
 
 Invalid Instruction: Upon reading an invalid instruction the program will write the following to stderr: "Invalid instruction." Then it will wait for the next instruction from stdin.
 
-Example of a valid input file (directed graph with n = 8 and m = 14):
- 8 14
- 1 1 2 10
- 2 1 4 5
- 3 2 3 1
- 4 2 4 2
- 5 3 5 4
- 6 4 2 3
- 7 4 3 9
- 8 4 5 2
- 9 5 1 7
-10 5 3 6
-11 6 3 7
-12 6 7 5
-13 7 8 3
-14 8 6 1
-<img width="632" height="232" alt="image" src="https://github.com/user-attachments/assets/393fe03e-3749-4ae1-873b-34247a1d1e27" />
 
