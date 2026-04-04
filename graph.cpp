@@ -4,8 +4,8 @@
 #include <iostream>
 
 pNODE *createGraph(int n){
-    pNODE *ADJ = new pNODE[n]; //allocate array of pointers for adjacency list
-    for (int i = 0; i < n; i++){
+    pNODE *ADJ = new pNODE[n + 1]; //allocate array of pointers for adjacency list using 1-based indexing
+    for (int i = 1; i <= n; i++){
         ADJ[i] = nullptr; //initialize each pointer to nullptr (empty list)
     }
     return ADJ;
