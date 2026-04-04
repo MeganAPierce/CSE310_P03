@@ -1,6 +1,7 @@
 #include "graph.h"
 #include "heap.h"
 #include "stack.h"
+#include <cfloat>
 #include <iostream>
 
 pNODE *createGraph(int n){
@@ -54,6 +55,8 @@ void addEdge(pNODE *ADJ, int edgeIndex, int u, int v, double w, int insertAtRear
 };
 
 //PrintADJ command
+/*not currently in line with the expected output format, assignment examples:
+ADJ[1]:-->[1 2: 10.00] */
 void printGraph(pNODE *ADJ, int n){
     if (ADJ == nullptr) {
         std::cerr << "Error: adjacency list is NULL\n";
@@ -80,16 +83,25 @@ void initializeSingleSource(pVERTEX *V, int n, int source){
         V[i]->key = std::numeric_limits<double>::infinity(); //initialize all keys to infinity
         V[i]->pi = -1; //initialize all predecessors to -1 (no predecessor)
         V[i]->color = WHITE; //initialize all vertices as unvisited
+        V[i]->position = 0; //initialize all vertices as not in heap (position 0)
     }
     V[source]->key = 0.0; //distance to source vertex is 0
 }
 
 
 //Dijkstra's algorithm implementation
+//currently doesn't match required variant
+/*spec says:
+1. initialize all vertices
+2. create empty heap
+3. set source key to 0
+4. insert source only
+5. when a white neighbor is discovered, insert it
+6. when a gray neighbor improves call DecreaseKey */
 void dijkstra(pVERTEX *V, pNODE *ADJ, int n, int source, int destination, pHEAP pHeap){
     initializeSingleSource(V, n, source); //initialize vertices for Dijkstra's algorithm
 
-    for (int i = 0; i < n; i++){
+    for (int i = 1; i <= n; i++){
         insertElement(pHeap, V[i]); //insert all vertices into the heap
     }
 
@@ -112,6 +124,9 @@ void dijkstra(pVERTEX *V, pNODE *ADJ, int n, int source, int destination, pHEAP 
 
 
 //PrintPath command
+/*Formatting not currently in spec, should look like:
+The shortest path from 1 to 3 is:
+[1: 0.00]-->[4: 5.00]-->[2: 8.00]-->[3: 9.00].*/
 void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
     if (V == nullptr || pStack == nullptr) return; //null check to prevent dereferencing null pointer
 
