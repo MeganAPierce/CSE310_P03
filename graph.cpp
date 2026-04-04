@@ -3,6 +3,7 @@
 #include "stack.h"
 #include <cfloat>
 #include <iostream>
+#include <iomanip>
 
 pNODE *createGraph(int n){
     pNODE *ADJ = new pNODE[n + 1]; //allocate array of pointers for adjacency list using 1-based indexing
@@ -58,17 +59,15 @@ void addEdge(pNODE *ADJ, int edgeIndex, int u, int v, double w, int insertAtRear
 /*not currently in line with the expected output format, assignment examples:
 ADJ[1]:-->[1 2: 10.00] */
 void printGraph(pNODE *ADJ, int n){
-    if (ADJ == nullptr) {
-        std::cerr << "Error: adjacency list is NULL\n";
-        return;
-    }
+    if(ADJ == nullptr) return; //null check 
 
-    for (int i = 0; i < n; i++){
-        std::cout << "Vertex " << i << ":";
+    //print adjacency list using 1-based indexing
+    for (int i = 1; i <= n; i++){
+        std::cout << "ADJ[" << i << "]:";
         pNODE current = ADJ[i];
         while (current != nullptr){
-            std::cout << " -> (v" << current->v << ", w=" << current->w << ")";
-            current = current->next;
+            std::cout << "-->["<<current->u<<" "<<current->v<<": "<<std::fixed<<std::setprecision(2)<<current->w<<"]";
+            current = current->next; //move to next edge in list
         }
         std::cout << "\n";
     }
@@ -78,9 +77,10 @@ void printGraph(pNODE *ADJ, int n){
 //helper function to initialize vertices for Dijkstra's algorithm
 void initializeSingleSource(pVERTEX *V, int n, int source){
     if (V == nullptr) return; //null check to prevent dereferencing null pointer
-
-    for (int i = 0; i < n; i++){
-        V[i]->key = std::numeric_limits<double>::infinity(); //initialize all keys to infinity
+    //initialize vertices using 1-based indexing
+    for (int i = 1; i <= n; i++){
+        V[i]->index = i; //set vertex index
+        V[i]->key = DBL_MAX; //initialize all keys to infinity
         V[i]->pi = -1; //initialize all predecessors to -1 (no predecessor)
         V[i]->color = WHITE; //initialize all vertices as unvisited
         V[i]->position = 0; //initialize all vertices as not in heap (position 0)
@@ -99,26 +99,39 @@ void initializeSingleSource(pVERTEX *V, int n, int source){
 5. when a white neighbor is discovered, insert it
 6. when a gray neighbor improves call DecreaseKey */
 void dijkstra(pVERTEX *V, pNODE *ADJ, int n, int source, int destination, pHEAP pHeap){
-    initializeSingleSource(V, n, source); //initialize vertices for Dijkstra's algorithm
+    initializeSingleSource(V, n, source);
 
-    for (int i = 1; i <= n; i++){
-        insertElement(pHeap, V[i]); //insert all vertices into the heap
-    }
+    pHeap->size = 0;
+
+    V[source]->color = GRAY;
+    insertElement(pHeap, V[source]);
 
     while (pHeap->size > 0){
-        pVERTEX u = extractMin(pHeap); //get vertex with smallest key value
-        if (u->index == destination) break; //stop if we reached the destination
+        pVERTEX u = extractMin(pHeap);
+
+        if (destination != -1 && u->index == destination) break;
 
         pNODE current = ADJ[u->index];
+
         while (current != nullptr){
             pVERTEX v = V[current->v];
-            double alt = u->key + current->w; //calculate alternative path length
-            if (alt < v->key){ //if alternative path is shorter
-                v->pi = u->index; //update predecessor
-                decreaseKey(pHeap, v, alt); //update key value in heap
+            double alt = u->key + current->w;
+
+            if (v->color == WHITE){
+                v->color = GRAY;
+                v->key = alt;
+                v->pi = u->index;
+                insertElement(pHeap, v);
             }
-            current = current->next; //move to next adjacent edge
+            else if (v->color == GRAY && alt < v->key){
+                v->pi = u->index;
+                decreaseKey(pHeap, v, alt);
+            }
+
+            current = current->next;
         }
+
+        u->color = BLACK;
     }
 };
 
@@ -130,31 +143,37 @@ The shortest path from 1 to 3 is:
 void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
     if (V == nullptr || pStack == nullptr) return; //null check to prevent dereferencing null pointer
 
-    int current = destination;
-    while (current != -1){
-        push(pStack, current); //push vertex index onto stack
-        current = V[current]->pi; //move to predecessor vertex
+    if(V[destination]->key == DBL_MAX){
+        std::cout << "There is no path from "<<source<< " to "<<destination<<"\n";
+        return;
     }
 
-    std::cout << "Shortest path from vertex " << source << " to vertex " << destination << ": ";
-    while (!isEmpty(pStack)){
-        int vertexIndex = pop(pStack);
-        std::cout << vertexIndex;
-        if (!isEmpty(pStack)) std::cout << " -> ";
+    int current = destination;
+    while (current != -1){
+        push(pStack, current);
+        current = V[current]->pi;
     }
-    std::cout << "\n";
+
+    std::cout << "The shortest path from " << source << " to " << destination << " is:\n";
+
+    while (!isEmpty(pStack)){
+        int v = pop(pStack);
+        std::cout << "[" << v << ": "<< std::fixed << std::setprecision(2)<< V[v]->key << "]";
+        if (!isEmpty(pStack)) std::cout << "-->";
+    }
+
+    std::cout << ".\n";
 };
 
 
 //PrintLength command
 void printLength(pVERTEX *V, int source, int destination){
-    if (V == nullptr) return; //null check to prevent dereferencing null pointer
+    if (V == nullptr) return;
 
-    double length = V[destination]->key;
-    if (length == std::numeric_limits<double>::infinity()){
-        std::cout << "No path from vertex " << source << " to vertex " << destination << "\n";
+    if (V[destination]->key == DBL_MAX){
+        std::cout << "There is no path from "<< source << " to " << destination << ".\n";
     } else {
-        std::cout << "Shortest path length from vertex " << source << " to vertex " << destination << ": " << length << "\n";
+        std::cout << "The length of the shortest path from "<< source << " to " << destination << " is: "<< std::fixed << std::setprecision(2)<< V[destination]->key << "\n";
     }
 };
 
