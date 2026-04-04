@@ -25,6 +25,8 @@ void destroyGraph(pNODE *ADJ, int n){
     delete[] ADJ; //free memory of adjacency list array
 }
 
+
+//Helper function to add edge to adjacency list, insertAtRear == 1 means add at end of list, 0 means add at front of list
 void addEdge(pNODE *ADJ, int edgeIndex, int u, int v, double w, int insertAtRear){
     if (ADJ == nullptr) return; //null check to prevent dereferencing null pointer
 
@@ -51,7 +53,7 @@ void addEdge(pNODE *ADJ, int edgeIndex, int u, int v, double w, int insertAtRear
     }
 };
 
-
+//PrintADJ command
 void printGraph(pNODE *ADJ, int n){
     if (ADJ == nullptr) {
         std::cerr << "Error: adjacency list is NULL\n";
@@ -69,6 +71,8 @@ void printGraph(pNODE *ADJ, int n){
     }
 };
 
+
+//helper function to initialize vertices for Dijkstra's algorithm
 void initializeSingleSource(pVERTEX *V, int n, int source){
     if (V == nullptr) return; //null check to prevent dereferencing null pointer
 
@@ -81,7 +85,7 @@ void initializeSingleSource(pVERTEX *V, int n, int source){
 }
 
 
-
+//Dijkstra's algorithm implementation
 void dijkstra(pVERTEX *V, pNODE *ADJ, int n, int source, int destination, pHEAP pHeap){
     initializeSingleSource(V, n, source); //initialize vertices for Dijkstra's algorithm
 
@@ -106,6 +110,8 @@ void dijkstra(pVERTEX *V, pNODE *ADJ, int n, int source, int destination, pHEAP 
     }
 };
 
+
+//PrintPath command
 void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
     if (V == nullptr || pStack == nullptr) return; //null check to prevent dereferencing null pointer
 
@@ -124,6 +130,8 @@ void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
     std::cout << "\n";
 };
 
+
+//PrintLength command
 void printLength(pVERTEX *V, int source, int destination){
     if (V == nullptr) return; //null check to prevent dereferencing null pointer
 
