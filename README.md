@@ -68,3 +68,5 @@ Example of a valid input file (directed graph with n = 8 and m = 14):
 12 6 7 5
 13 7 8 3
 14 8 6 1
+<img width="632" height="232" alt="image" src="https://github.com/user-attachments/assets/393fe03e-3749-4ae1-873b-34247a1d1e27" />
+
