@@ -1,6 +1,6 @@
 #include "heap.h"
 #include <iostream>
-#include <iomanip>
+
     
 //helper function to swap two nodes in the heap and update their positions  
 static void swapHeapNodes(pHEAP pHeap, int i, int j){
@@ -33,7 +33,7 @@ static void heapify(pHEAP pHeap,int i){
     }
 }
 
-//helper function to build a heap from an array of vertices
+//creates an empty heap with the specified capacity and returns a pointer to it
 pHEAP createHeap(int capacity){
     pHEAP pHeap = new HEAP;
     pHeap->capacity = capacity;
@@ -83,11 +83,13 @@ pVERTEX extractMin(pHEAP pHeap){
 
     //only one element in the heap, just remove it and return
     if(pHeap->size == 1){
-        pHeap->size--;
+        pHeap->H[1] = nullptr;
+        pHeap->size = 0;
         return minVertex;
     }
 
     pHeap->H[1] = pHeap->H[pHeap->size];
+    pHeap->H[pHeap->size] = nullptr; //remove last element from heap
     pHeap->size--;
     pHeap->H[1]->position = 1; //update position of new root
 
@@ -97,7 +99,7 @@ pVERTEX extractMin(pHEAP pHeap){
 
 void decreaseKey(pHEAP pHeap, pVERTEX vertex, double newKey){
     if (pHeap == nullptr || vertex == nullptr) return; //invalid input
-    if(vertex->position == 0) return; //vertext not in heap
+    if(vertex->position == 0) return; //vertex not in heap
     if (newKey >= vertex->key) return; //new key is not smaller
 
     vertex->key = newKey; //update the key value of the vertex
@@ -116,15 +118,24 @@ void decreaseKey(pHEAP pHeap, pVERTEX vertex, double newKey){
 };
 
 
-void printHeap(HEAP *pHeap){
+void printHeap(pHEAP pHeap){
+    //check if heap is empty or null
     if (pHeap == nullptr) {
         std::cerr << "Error: heap is NULL\n";
         return;
     }
-
+    //print heap capacity and size
     std::cout << "Capacity = " << pHeap->capacity << ", size = " << pHeap->size << "\n";
-
+    
+    //print each element in the heap array
     for (int k = 1; k <= pHeap->size; k++) {
-        std::cout << "H[" << k << "] = " << pHeap->H[k] << "\n";
+        pVERTEX v = pHeap->H[k];
+
+        //check if vertex pointer is null before trying to move on
+        if (v == nullptr) {
+            std::cout << "H[" << k << "] = NULL\n";
+        } else {
+            std::cout << "H[" << k << "] = " << "Vertex " << v->index << " | key=" << v->key << " | position=" << v->position << "\n";
+        }
     }
 };
