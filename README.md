@@ -1,55 +1,53 @@
-This project is the essential part of a navigation system. It reads in either a directed graph or an
-undirected graph G with n vertices and m edges from a file specified by the command-line (with
-proper arguments). It then takes corresponding actions for given instructions from stdin. 
+----------OVERVIEW-----------
+This program implements a graph-based navigation system that computes shortest paths using Dijkstra’s Algorithm. It supports both directed and undirected graphs, allows dynamic interaction via standard input, and provides efficient shortest path queries.
 
-Besides the Stop instruction, valid instructions include
-(i) graph printing instruction (PrintADJ)
-(ii) path computation instructions (SinglePair and SingleSource)
-(iii) length/path printing instructions (PrintLength and PrintPath)
+The system:
+-Reads a graph from an input file
+-Builds an adjacency list representation
+-Computes shortest paths using a min-heap (priority queue)
+-Supports interactive commands for querying paths and distances
 
-Both SinglePair and SingleSource path computations should have worst-case time complexity
-O((m + n)logn). Path printing should have worst-case time complexity O(n). 
-Length printing should have worst-case time complexity O(1). 
-Memory should be allocated when needed, and released when it is no longer needed. 
+-----------FEATURES-----------
+-Supports both DirectedGraphs and UndirectedGraphs
+-Efficient shortest path computation with time complexity of O((m + n) log n)
+-Uses:
+    -Adjacency list for graph storage
+    -Min-heap for Dijkstra's algorithm
+    -Stack for path reconstruction
+-Strict input validation and memory management
+-No memory leaks (all structures are properly destroyed)
 
-Memory leaks should be avoided.
+--------DATA STRUCTURES--------
+        
+        VERTEX
+typedef struct TAG_VERTEX {
+    int index;
+    COLOR color;
+    double key; //shortest distance from source
+    int pi; //predecessor (used for path reconstruction)
+    int position;
+} VERTEX;
 
-VALID EXECUTION FORM:
+        GRAPH
 
-./PJ3 <InputFile> <GraphType> <Flag>
+typedef struct TAG_NODE {
+    int u, v;
+    double w;
+    struct TAG_NODE *next;
+} NODE;
 
-Where:
-    -PJ3 is the executable file of the project
-    -<InputFile> should be the exact name of the input file
-    -<GraphType> should be substitued by either DirectedGraph or UndirectedGraph
-    -<Flag> is either 1 or 0
+        HEAP
 
-The program will check if the execution is valid. If it is not valid, it will print the following message to stderr and stop:
-Usage: ./PJ3 <InputFile> <GraphType> <Flag> 
+typedef struct TAG_HEAP {
+    int capacity;
+    int size;
+    pELEMENT *H;
+} HEAP;
 
-INSTRUCTIONS:
+        STACK
 
-Stop :on reading stop, the program stops
-
-PrintADJ :program should:
-    -print the adjacency lists of the input graph to stdout
-    -wait for the next instruction from stdin
-
-SinglePair <source> <destination> :where <source> and <destination> are two integers in the set {1,2,...,n}. This is one of the two path computation instructions. On reading SinglePair the program will:
-    -Apply the variant of Dijkstra's algorithm as taught in class to compute the shortest path from <source> to <destination>. 
-
-SingleSource <source> :where <source> in the set {1,2,...,n}. This is the other path computation instruction. On reading the SingleSource instruction the program will:
-    -Apply Dijkstra's algorithm to compute shortest paths from <source> to all vertices that are reachable from <source>.
-
-PrintLength <s> <t> :where <s> and <t> are two integers in the set {1,2,...,n}. This is the only length printing instruction. This instruction is valid IF AND ONLY IF <s> is the same as <source> in the most recent path computation instruction and <t> is the same as <destination> in case the most recent path computation instruction is a SinglePair instruction. On reading the instruction the program will:
-    -Print the length of the computed path to stdout if the program has computed a shortest <s> to <t> in the most recent path computation. 
-    -If the program hasn't computed a shortest <s> to <t> path in the most recent path computation, it will print the following to stdout:
-    "There is no path from <s> to <t>."
-    -Wait for the next instruction from stdin
-
-
-PrintPath <s> <t>
-
-Invalid Instruction: Upon reading an invalid instruction the program will write the following to stderr: "Invalid instruction." Then it will wait for the next instruction from stdin.
-
-
+typedef struct TAG_STACK {
+    int capacity;
+    int top;
+    int *S;
+} STACK;
