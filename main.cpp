@@ -43,10 +43,10 @@ int main(){
                   << " | pi=" << V[i]->pi << "\n";
     }
 
-    std::cout << "\n=== PATH 1 → 4 ===\n";
+    std::cout << "\n=== PATH 1 - > 4 ===\n";
     printPath(V, 1, 4, stack);
 
-    std::cout << "\n=== LENGTH 1 → 4 ===\n";
+    std::cout << "\n=== LENGTH 1 - > 4 ===\n";
     printLength(V, 1, 4);
 
     // cleanup
