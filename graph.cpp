@@ -56,8 +56,6 @@ void addEdge(pNODE *ADJ, int edgeIndex, int u, int v, double w, int insertAtRear
 };
 
 //PrintADJ command
-/*not currently in line with the expected output format, assignment examples:
-ADJ[1]:-->[1 2: 10.00] */
 void printGraph(pNODE *ADJ, int n){
     if(ADJ == nullptr) return; //null check 
 
@@ -90,7 +88,6 @@ void initializeSingleSource(pVERTEX *V, int n, int source){
 
 
 //Dijkstra's algorithm implementation
-//currently doesn't match required variant
 /*spec says:
 1. initialize all vertices
 2. create empty heap
