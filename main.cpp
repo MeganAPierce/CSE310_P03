@@ -136,7 +136,6 @@ int main(int argc, char* argv[]){
             }
 
             if(!hasComputed || s != lastSource || (!lastWasSingleSource && t != lastDestination)){
-                std::cout << "There is no path from " << s << " to " << t << ".\n";
                 continue;                
             }
 
@@ -158,7 +157,6 @@ int main(int argc, char* argv[]){
             }
 
             if(!hasComputed || s != lastSource || (!lastWasSingleSource && t != lastDestination)){
-                std::cout << "There is no path from " << s << " to " << t << ".\n";
                 continue;                
             }
 
