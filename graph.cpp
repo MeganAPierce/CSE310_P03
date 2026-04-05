@@ -143,8 +143,8 @@ The shortest path from 1 to 3 is:
 void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
     if (V == nullptr || pStack == nullptr) return; //null check to prevent dereferencing null pointer
 
-    if(V[destination]->key == DBL_MAX){
-        std::cout << "There is no path from "<<source<< " to "<<destination<<"\n";
+    if (V[destination]->key == DBL_MAX){
+        std::cout << "There is no path from " << source << " to " << destination << ".\n";
         return;
     }
 
@@ -158,10 +158,11 @@ void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
 
     while (!isEmpty(pStack)){
         int v = pop(pStack);
-        std::cout << "[" << v << ": "<< std::fixed << std::setprecision(2)<< V[v]->key << "]";
-        if (!isEmpty(pStack)) std::cout << "-->";
+        std::cout << "[" << v << ": "<< std::setw(8) << std::fixed << std::setprecision(2) << V[v]->key << "]";
+        if (!isEmpty(pStack)){
+            std::cout << "-->";
+        }
     }
-
     std::cout << ".\n";
 };
 
@@ -171,9 +172,9 @@ void printLength(pVERTEX *V, int source, int destination){
     if (V == nullptr) return;
 
     if (V[destination]->key == DBL_MAX){
-        std::cout << "There is no path from "<< source << " to " << destination << ".\n";
+        std::cout << "There is no path from " << source << " to " << destination << ".\n";
     } else {
-        std::cout << "The length of the shortest path from "<< source << " to " << destination << " is: "<< std::fixed << std::setprecision(2)<< V[destination]->key << "\n";
+        std::cout << "The length of the shortest path from "<< source << " to " << destination << " is: "<< std::setw(8) << std::fixed << std::setprecision(2)<< V[destination]->key << "\n";
     }
 };
 
