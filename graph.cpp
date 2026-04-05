@@ -155,7 +155,9 @@ void printPath(pVERTEX *V, int source, int destination, pSTACK pStack){
 
     while (!isEmpty(pStack)){
         int v = pop(pStack);
-        std::cout << "[" << v << ": "<< std::setw(8) << std::fixed << std::setprecision(2) << V[v]->key << "]";
+        std::cout << "[" << v << ":" << std::setw(8)
+          << std::fixed << std::setprecision(2)
+          << V[v]->key << "]";
         if (!isEmpty(pStack)){
             std::cout << "-->";
         }
