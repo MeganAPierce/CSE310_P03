@@ -1,63 +1,127 @@
-#include "graph.h"
-#include "heap.h"
-#include "stack.h"
+#include "main.h"
+#include "util.h"
 #include <iostream>
+#include <fstream>
 
-int main(){
-    int n = 4;
+int main(int argc, char* argv[]){
 
-    // create vertex array
-    pVERTEX *V = new pVERTEX[n + 1];
-    for (int i = 1; i <= n; i++){
-        V[i] = new VERTEX;
+    //validate command-line arguments
+    if(!validateArguments(argc, argv)){
+        return 1;
     }
 
-    // create graph
-    pNODE *ADJ = createGraph(n);
-
-    // manually add edges (directed)
-    addEdge(ADJ, 1, 1, 2, 1.0, 1);
-    addEdge(ADJ, 2, 1, 3, 4.0, 1);
-    addEdge(ADJ, 3, 2, 3, 2.0, 1);
-    addEdge(ADJ, 4, 2, 4, 5.0, 1);
-    addEdge(ADJ, 5, 3, 4, 1.0, 1);
-
-    std::cout << "=== GRAPH ===\n";
-    printGraph(ADJ, n);
-
-    // create heap and stack
+    std::string filename = argv[1];
+    std::string graphType = argv[2];
+    int flag = std::stoi(argv[3]);
+    
+    //read the graph from the input file
+    int n, m;
+    std::ifstream infile(filename);
+    
+    if(!infile){
+        std::cerr << "Usage: ./PJ3 <InputFile> <GraphType> <Flag>\n";
+        return 1;
+    }
+    infile >> n >> m; //read number of vertices and edges
+    
+    //create a vertex array  
+    pVERTEX *V = new pVERTEX[n + 1]; //1-based indexing
+    for (int i = 1; i <= n; i++){
+        V[i] = new VERTEX; //allocate memory for each vertex
+    }
+    //create the graph, heap and stack 
     pHEAP heap = createHeap(n);
     pSTACK stack = createStack(n);
+    pNODE *ADJ = createGraph(n);
 
-    // run Dijkstra
-    int source = 1;
-    int destination = -1; // full single-source run
+    int edgeIndex, u, v;
+    double w;
 
-    dijkstra(V, ADJ, n, source, destination, heap);
+    //read through the file and build the graph
+    for(int i = 0; i < m; i++){
+        infile >> edgeIndex >> u >> v >> w;
 
-    std::cout << "\n=== RESULTS ===\n";
-
-    for (int i = 1; i <= n; i++){
-        std::cout << "Vertex " << i 
-                  << " | dist=" << V[i]->key 
-                  << " | pi=" << V[i]->pi << "\n";
+        if (graphType == "DirectedGraph"){
+            addEdge(ADJ, edgeIndex, u, v, w, flag);
+        }else if (graphType == "UndirectedGraph"){
+            addEdge(ADJ, edgeIndex, u, v, w, flag);
+            addEdge(ADJ, edgeIndex, v, u, w, flag);
+        }
     }
 
-    std::cout << "\n=== PATH 1 - > 4 ===\n";
-    printPath(V, 1, 4, stack);
+    infile.close();
 
-    std::cout << "\n=== LENGTH 1 - > 4 ===\n";
-    printLength(V, 1, 4);
+    //process stdin instructions
+    std::string command;
+    while(std::cin >> command){
+        if(command == "Stop"){
+            break;
+        } else if (command == "PrintADJ"){
+            printGraph(ADJ,n);
+        } else if (command == "SinglePair"){
+            int s, t; 
+            //check input
+            if(!(std::cin >> s >> t)){
+                std::cerr << "Invalid instruction.\n";
+                std::cin.clear();
+                std::string junk;
+                std::getline(std::cin, junk);
+                continue;
+            }
 
-    // cleanup
+            dijkstra(V, ADJ, n, s, t, heap);
+
+        } else if (command == "SingleSource"){
+            int s;
+            if(!(std::cin >> s)){
+                std::cerr << "Invalid instruction.\n";
+                std::cin.clear();
+                std::string junk;
+                std::getline(std::cin, junk);
+                continue;
+            }
+
+            dijkstra(V, ADJ, n, s, -1, heap);
+
+        } else if (command == "PrintPath"){
+            int s, t;
+            if(!(std::cin >> s >> t)){
+                std::cerr << "Invalid instruction.\n";
+                std::cin.clear();
+                std::string junk;
+                std::getline(std::cin, junk);
+                continue;
+            }
+
+            printPath(V, s, t, stack);
+
+        } else if (command == "PrintLength"){
+            int s, t;
+            if(!(std::cin >> s >> t)){
+                std::cerr << "Invalid instruction.\n";
+                std::cin.clear();
+                std::string junk;
+                std::getline(std::cin, junk);
+                continue;
+            }
+
+            printLength(V, s, t);
+            
+        } else {
+            std::cerr << "Invalid instruction.\n";
+        }
+    }
+
+    //clean up memory at the end!!
     destroyHeap(heap);
     destroyStack(stack);
     destroyGraph(ADJ, n);
-
-    for (int i = 1; i <= n; i++){
+    
+    for (int i = 1; i <=n; i++){
         delete V[i];
     }
     delete[] V;
+
 
     return 0;
 }
