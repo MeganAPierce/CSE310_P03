@@ -7,26 +7,26 @@
 
 pNODE *createGraph(int n){
     pNODE *ADJ = new pNODE[n + 1]; //allocate array of pointers for adjacency list using 1-based indexing
-    for (int i = 1; i <= n; i++){
+    for (int i = 0; i <= n; i++){
         ADJ[i] = nullptr; //initialize each pointer to nullptr (empty list)
     }
     return ADJ;
 }
 
 void destroyGraph(pNODE *ADJ, int n){
-    if (ADJ == nullptr) return; //null check to prevent dereferencing null pointer
+    if (ADJ == nullptr) return;
 
-    for (int i = 0; i < n; i++){
+    for (int i = 1; i <= n; i++){
         pNODE current = ADJ[i];
         while (current != nullptr){
-            pNODE temp = current; //store current node to delete
-            current = current->next; //move to next node before deleting
-            delete temp; //free memory of current node
+            pNODE temp = current;
+            current = current->next;
+            delete temp;
         }
     }
-    delete[] ADJ; //free memory of adjacency list array
+    delete[] ADJ;
 }
-
+//C:\Users\Megan Pierce\Projects\CSE310_P03\graph.cpp
 
 //Helper function to add edge to adjacency list, insertAtRear == 1 means add at end of list, 0 means add at front of list
 void addEdge(pNODE *ADJ, int edgeIndex, int u, int v, double w, int insertAtRear){
