@@ -3,6 +3,13 @@
 #include <iostream>
 #include <fstream>
 
+//helper function to check validity of provided vertex
+//not needed in main.h because it isn't being called anywhere else but main.cpp
+//static because it tells compiler "this function is only visible inside this file"
+static bool isValidVertex(int v, int n){
+    return v >= 1 && v <= n;
+}
+
 int main(int argc, char* argv[]){
 
     //validate command-line arguments
@@ -51,6 +58,18 @@ int main(int argc, char* argv[]){
 
     infile.close();
 
+    /*Helpers to track:
+    * if shortest-path computation has happened
+    * most recent source
+    * most recent destination
+    * if last computation was SingleSource
+    */
+    bool hasComputed = false;
+    int lastSource = -1;
+    int lastDestination = -1;
+    bool lastWasSingleSource = false;
+
+
     //process stdin instructions
     std::string command;
     while(std::cin >> command){
@@ -69,7 +88,16 @@ int main(int argc, char* argv[]){
                 continue;
             }
 
+            if(!isValidVertex(s, n) || !isValidVertex(t, n)){
+                std::cerr << "Invalid instruction.\n";
+                continue;
+            }
+
             dijkstra(V, ADJ, n, s, t, heap);
+            lastSource = s;
+            lastDestination = t;
+            lastWasSingleSource = false;
+            hasComputed = true;
 
         } else if (command == "SingleSource"){
             int s;
@@ -81,7 +109,16 @@ int main(int argc, char* argv[]){
                 continue;
             }
 
+            if(!isValidVertex(s,n)){
+                std::cerr << "Invalid instruction.\n";
+                continue;
+            }
+
             dijkstra(V, ADJ, n, s, -1, heap);
+            lastSource = s;
+            lastDestination = -1;
+            lastWasSingleSource = true;
+            hasComputed = true;
 
         } else if (command == "PrintPath"){
             int s, t;
@@ -91,6 +128,16 @@ int main(int argc, char* argv[]){
                 std::string junk;
                 std::getline(std::cin, junk);
                 continue;
+            }
+
+            if(!isValidVertex(s,n) || !isValidVertex(t, n)){
+                std::cerr << "Invalid instruction.\n";
+                continue;                
+            }
+
+            if(!hasComputed || s != lastSource || (!lastWasSingleSource && t != lastDestination)){
+                std::cout << "There is no path from " << s << " to " << t << ".\n";
+                continue;                
             }
 
             printPath(V, s, t, stack);
@@ -103,6 +150,16 @@ int main(int argc, char* argv[]){
                 std::string junk;
                 std::getline(std::cin, junk);
                 continue;
+            }
+
+            if(!isValidVertex(s,n) || !isValidVertex(t, n)){
+                std::cerr << "Invalid instruction.\n";
+                continue; 
+            }
+
+            if(!hasComputed || s != lastSource || (!lastWasSingleSource && t != lastDestination)){
+                std::cout << "There is no path from " << s << " to " << t << ".\n";
+                continue;                
             }
 
             printLength(V, s, t);
