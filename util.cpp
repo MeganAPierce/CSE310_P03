@@ -29,8 +29,10 @@ bool validateArguments(int argc, char* argv[]){
     std::string graphType = argv[2];
     std::string flagStr = argv[3];
 
-    if(!fileExists(filename) || !isValidGraphType || !isValidFlag(flagStr)){
+    if(!fileExists(filename) || !isValidGraphType(graphType) || !isValidFlag(flagStr)){
         std::cerr << "Usage: ./PJ3 <InputFile> <GraphType> <Flag>\n";
         return false;
     }
+
+    return true;
 }
